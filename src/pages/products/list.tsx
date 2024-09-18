@@ -1,4 +1,5 @@
-import { useTable, useMany } from "@refinedev/core";
+import { useTable, useMany, useNavigation } from "@refinedev/core";
+import { Link } from "react-router-dom";
 
 export const ListProducts = () => {
   const {
@@ -13,6 +14,8 @@ export const ListProducts = () => {
     pagination: { current: 1, pageSize: 10 },
     sorters: { initial: [{ field: "id", order: "asc" }] },
   });
+
+  const {showUrl, editUrl} = useNavigation();
 
   const { data: categories } = useMany({
     resource: "categories",
@@ -82,6 +85,7 @@ export const ListProducts = () => {
             <th onClick={() => onSort("price")}>
               Price {indicator[getSorter("price")]}
             </th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -98,6 +102,10 @@ export const ListProducts = () => {
               </td>
               <td>{product.material}</td>
               <td>{product.price}</td>
+              <td>
+                <Link to={showUrl("protected-products", product.id)}>Show</Link>
+                <Link to={editUrl("protected-products", product.id)}>Edit</Link>
+              </td>
             </tr>
           ))}
         </tbody>
