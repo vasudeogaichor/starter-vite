@@ -1,5 +1,5 @@
 import { Refine, Authenticated } from "@refinedev/core";
-import routerProvider from "@refinedev/react-router-v6";
+import routerProvider, { NavigateToResource } from "@refinedev/react-router-v6";
 import {
   BrowserRouter,
   Routes,
@@ -26,6 +26,16 @@ export default function App(): JSX.Element {
         dataProvider={dataProvider}
         authProvider={authProvider}
         routerProvider={routerProvider}
+        resources={[
+          {
+            name: "protected-products",
+            list: "/products",
+            show: "/products/:id",
+            edit: "/products/:id/edit",
+            create: "/products/create",
+            meta: { label: "Products" },
+          },
+        ]}
       >
         <Routes>
           <Route
@@ -36,12 +46,18 @@ export default function App(): JSX.Element {
               </Authenticated>
             }
           >
-            <Route index element={<ListProducts />} />
+            <Route index element={<NavigateToResource resource="protected-products" />} />
+            <Route path="/products">
+              <Route index element={<ListProducts />} />
+              <Route path=":id" element={<ShowProduct />} />
+              <Route path=":id/edit" element={<EditProduct />} />
+              <Route path="create" element={<CreateProduct />} />
+            </Route>
           </Route>
           <Route
             element={
               <Authenticated key="auth-pages" fallback={<Outlet />}>
-                <Navigate to="/" />
+                <NavigateToResource resource="protected-products" />
               </Authenticated>
             }
           >
