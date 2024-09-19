@@ -28,7 +28,7 @@ export const authProvider: AuthProvider = {
     },
     logout: async () => {
         localStorage.removeItem("my_access_token");
-        return { success: true };
+        return { success: true, redirectTo: "/login" };
     },
     // login method receives an object with all the values you've provided to the useLogin hook.
     login: async ({ email, password }) => {

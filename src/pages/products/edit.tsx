@@ -1,7 +1,7 @@
 import { useForm, useSelect } from "@refinedev/core";
 
 export const EditProduct = () => {
-  const { onFinish, mutation, query } = useForm();
+  const { onFinish, mutation, query } = useForm({redirect: "edit"});
 
   const record = query?.data?.data;
 

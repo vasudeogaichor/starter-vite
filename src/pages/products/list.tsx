@@ -13,6 +13,7 @@ export const ListProducts = () => {
     // resource: "protected-products",
     pagination: { current: 1, pageSize: 10 },
     sorters: { initial: [{ field: "id", order: "asc" }] },
+    syncWithLocation: true
   });
 
   const {showUrl, editUrl} = useNavigation();
