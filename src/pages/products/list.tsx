@@ -1,74 +1,149 @@
-import { useTable, useMany, useNavigation } from "@refinedev/core";
+import { getDefaultFilter, useMany, useNavigation } from "@refinedev/core";
 import { Link } from "react-router-dom";
+import {
+  useTable,
+  EditButton,
+  ShowButton,
+  getDefaultSortOrder,
+  FilterDropdown,
+  useSelect,
+} from "@refinedev/antd";
+import { Input, Select, Space, Table } from "antd";
 
 export const ListProducts = () => {
-  const {
-    tableQuery: { data, isLoading },
-    current,
-    setCurrent,
-    pageCount,
-    sorters,
-    setSorters,
-  } = useTable({
-    // resource: "protected-products",
-    pagination: { current: 1, pageSize: 10 },
-    sorters: { initial: [{ field: "id", order: "asc" }] },
-    syncWithLocation: true
+  // const {
+  //   tableQuery: { data, isLoading },
+  //   current,
+  //   setCurrent,
+  //   pageCount,
+  //   sorters,
+  //   setSorters,
+  // } = useTable({
+  //   // resource: "protected-products",
+  //   pagination: { current: 1, pageSize: 10 },
+  //   sorters: { initial: [{ field: "id", order: "asc" }] },
+  //   syncWithLocation: true
+  // });
+
+  const { tableProps, sorters, filters } = useTable({
+    sorters: {
+      initial: [{ field: "id", order: "asc" }],
+    },
+    filters: {
+      initial: [{ field: "category.id", operator: "eq", value: 2 }],
+    },
+    syncWithLocation: true,
   });
 
-  const {showUrl, editUrl} = useNavigation();
+  const { showUrl, editUrl } = useNavigation();
 
-  const { data: categories } = useMany({
+  const { data: categories, isLoading } = useMany({
     resource: "categories",
-    ids: data?.data?.map((product) => product.category?.id) ?? [],
+    ids: tableProps?.dataSource?.map((product) => product.category?.id) ?? [],
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { selectProps } = useSelect({
+    resource: "categories",
+    defaultValue: getDefaultFilter("category.id", filters, "eq"),
+  });
 
-  const onPrevious = () => {
-    if (current > 1) {
-      setCurrent(current - 1);
-    }
-  };
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  const onNext = () => {
-    if (current < pageCount) {
-      setCurrent(current + 1);
-    }
-  };
+  // const onPrevious = () => {
+  //   if (current > 1) {
+  //     setCurrent(current - 1);
+  //   }
+  // };
 
-  const onPage = (page: number) => {
-    setCurrent(page);
-  };
+  // const onNext = () => {
+  //   if (current < pageCount) {
+  //     setCurrent(current + 1);
+  //   }
+  // };
 
-  const getSorter = (field: string) => {
-    const sorter = sorters?.find((sorter) => sorter.field === field);
+  // const onPage = (page: number) => {
+  //   setCurrent(page);
+  // };
 
-    if (sorter) {
-      return sorter.order;
-    }
-  }
+  // const getSorter = (field: string) => {
+  //   const sorter = sorters?.find((sorter) => sorter.field === field);
 
-  const onSort = (field: string) => {
-    const sorter = getSorter(field);
-    setSorters(
-        sorter === "desc" ? [] : [
-        {
-            field,
-            order: sorter === "asc" ? "desc" : "asc",
-        },
-        ]
-    );
-  }
+  //   if (sorter) {
+  //     return sorter.order;
+  //   }
+  // };
 
-  const indicator = { asc: "⬆️", desc: "⬇️" };
+  // const onSort = (field: string) => {
+  //   const sorter = getSorter(field);
+  //   setSorters(
+  //     sorter === "desc"
+  //       ? []
+  //       : [
+  //           {
+  //             field,
+  //             order: sorter === "asc" ? "desc" : "asc",
+  //           },
+  //         ],
+  //   );
+  // };
+
+  // const indicator = { asc: "⬆️", desc: "⬇️" };
 
   return (
     <div>
       <h1>Products</h1>
-      <table>
+      <Table {...tableProps} rowKey="id">
+        <Table.Column
+          dataIndex="id"
+          title="ID"
+          sorter
+          defaultSortOrder={getDefaultSortOrder("id", sorters)}
+        />
+        <Table.Column
+          dataIndex="name"
+          title="Name"
+          sorter
+          defaultSortOrder={getDefaultSortOrder("name", sorters)}
+          filterDropdown={(props) => (
+              <FilterDropdown {...props}>
+                <Input />
+              </FilterDropdown>
+          )}
+        />
+        <Table.Column
+          dataIndex={["category", "id"]}
+          title="Category"
+          render={(value) => {
+            if (isLoading) return "Loading...";
+
+            return categories?.data?.find((category) => category.id == value)
+              ?.title;
+          }}
+          filterDropdown={(props) => (
+            <FilterDropdown
+              {...props}
+              mapValue={(selectedKey) => Number(selectedKey)}
+            >
+              <Select style={{ minWidth: 200 }} {...selectProps} />
+            </FilterDropdown>
+          )}
+          defaultFilteredValue={getDefaultFilter("category.id", filters, "eq")}
+        />
+        <Table.Column dataIndex="material" title="Material" />
+        <Table.Column dataIndex="price" title="Price" />
+        <Table.Column
+          title="Actions"
+          render={(_, record) => (
+            <Space>
+              <ShowButton hideText size="small" recordItemId={record.id} />
+              <EditButton hideText size="small" recordItemId={record.id} />
+            </Space>
+          )}
+        />
+      </Table>
+      {/* <table>
         <thead>
           <tr>
             <th onClick={() => onSort("id")}>
@@ -77,9 +152,7 @@ export const ListProducts = () => {
             <th onClick={() => onSort("name")}>
               Name {indicator[getSorter("name")]}
             </th>
-            <th>
-              Category
-            </th>
+            <th>Category</th>
             <th onClick={() => onSort("material")}>
               Material {indicator[getSorter("material")]}
             </th>
@@ -116,14 +189,18 @@ export const ListProducts = () => {
           {"<"}
         </button>
         <div>
-          {current - 1 > 0 && <span onClick={() => onPage(current - 1)}>{current - 1}</span>}
+          {current - 1 > 0 && (
+            <span onClick={() => onPage(current - 1)}>{current - 1}</span>
+          )}
           <span className="current">{current}</span>
-          {current + 1 < pageCount && <span onClick={() => onPage(current + 1)}>{current + 1}</span>}
+          {current + 1 < pageCount && (
+            <span onClick={() => onPage(current + 1)}>{current + 1}</span>
+          )}
         </div>
         <button type="button" onClick={onNext}>
           {">"}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
