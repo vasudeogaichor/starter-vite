@@ -1,5 +1,5 @@
 import { useOne, useShow } from "@refinedev/core";
-import { TextField, NumberField, MarkdownField } from "@refinedev/antd";
+import { TextField, NumberField, MarkdownField, Show } from "@refinedev/antd";
 import { Typography } from "antd";
 
 export const ShowProduct = () => {
@@ -8,7 +8,7 @@ export const ShowProduct = () => {
   const {
     query: { data, isLoading },
   } = useShow();
-  
+
   const { data: categoryData, isLoading: categoryIsLoading } = useOne({
     resource: "categories",
     id: data?.data?.category.id || "",
@@ -17,13 +17,12 @@ export const ShowProduct = () => {
     },
   });
 
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
+    <Show isLoading={isLoading}>
       <Typography.Title level={5}>Id</Typography.Title>
       <TextField value={data?.data?.id} />
 
@@ -43,7 +42,7 @@ export const ShowProduct = () => {
 
       <Typography.Title level={5}>Price</Typography.Title>
       <NumberField value={data?.data?.price} />
-    </div>
+    </Show>
 
     // <>
     // <div>Product name: {data?.data.name}</div>
