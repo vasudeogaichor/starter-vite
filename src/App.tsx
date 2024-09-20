@@ -46,7 +46,7 @@ export default function App(): JSX.Element {
                     key="authenticated-routes"
                     redirectOnFail="/login"
                   >
-                    <Header />
+                    {/* <Header /> */}
                     <ThemedLayoutV2 /*Title={(props) => (<ThemedTitleV2 {...props} text="Awesome Project" />)}*/>
                       <Outlet />
                     </ThemedLayoutV2>
