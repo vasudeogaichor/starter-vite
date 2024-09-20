@@ -1,7 +1,7 @@
 import { Refine, Authenticated } from "@refinedev/core";
 import routerProvider, { NavigateToResource } from "@refinedev/react-router-v6";
 import { ConfigProvider, App as AntdApp } from "antd";
-import { ThemedLayoutV2, ThemedTitleV2 } from "@refinedev/antd";
+import { ThemedLayoutV2, ThemedTitleV2, useNotificationProvider } from "@refinedev/antd";
 
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
@@ -27,6 +27,7 @@ export default function App(): JSX.Element {
             dataProvider={dataProvider}
             authProvider={authProvider}
             routerProvider={routerProvider}
+            notificationProvider={useNotificationProvider}
             resources={[
               {
                 name: "protected-products",
