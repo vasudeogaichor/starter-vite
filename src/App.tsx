@@ -1,7 +1,11 @@
 import { Refine, Authenticated } from "@refinedev/core";
 import routerProvider, { NavigateToResource } from "@refinedev/react-router-v6";
 import { ConfigProvider, App as AntdApp } from "antd";
-import { ThemedLayoutV2, ThemedTitleV2, useNotificationProvider } from "@refinedev/antd";
+import {
+  ThemedLayoutV2,
+  ThemedTitleV2,
+  useNotificationProvider,
+} from "@refinedev/antd";
 
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
@@ -13,10 +17,14 @@ import { EditProduct } from "./pages/products/edit";
 import { ListProducts } from "./pages/products/list";
 import { CreateProduct } from "./pages/products/create";
 
+import { ListCategories } from "./pages/categories/list";
+
 import { Login } from "./pages/login";
 import { Header } from "./components/header";
 
 import "antd/dist/reset.css";
+import { CreateCategory } from "./pages/categories/create";
+import { ShowCategory } from "./pages/categories/show";
 
 export default function App(): JSX.Element {
   return (
@@ -37,6 +45,12 @@ export default function App(): JSX.Element {
                 create: "/products/create",
                 meta: { label: "Products" },
               },
+              {
+                name: "categories",
+                list: "/categories",
+                show: "/categories/:id",
+                meta: { label: "Cagetories" },
+              },
             ]}
           >
             <Routes>
@@ -47,7 +61,8 @@ export default function App(): JSX.Element {
                     redirectOnFail="/login"
                   >
                     {/* <Header /> */}
-                    <ThemedLayoutV2 /*Title={(props) => (<ThemedTitleV2 {...props} text="Awesome Project" />)}*/>
+                    <ThemedLayoutV2 /*Title={(props) => (<ThemedTitleV2 {...props} text="Awesome Project" />)}*/
+                    >
                       <Outlet />
                     </ThemedLayoutV2>
                   </Authenticated>
@@ -62,6 +77,11 @@ export default function App(): JSX.Element {
                   <Route path=":id" element={<ShowProduct />} />
                   <Route path=":id/edit" element={<EditProduct />} />
                   <Route path="create" element={<CreateProduct />} />
+                </Route>
+                <Route path="/categories">
+                  <Route index element={<ListCategories />} />
+                  <Route path=":id" element={<ShowCategory />} />
+                  <Route path="create" element={<CreateCategory />} />
                 </Route>
               </Route>
               <Route
