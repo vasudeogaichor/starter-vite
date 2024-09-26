@@ -41,3 +41,7 @@ npm create refine-app@latest -- --example starter-vite
 <br/>
 
 [![Open starter-vite example from refine](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/embed/github/refinedev/refine/tree/master/examples/starter-vite?view=preview&theme=dark&codemirror=1)
+
+
+
+https://docs.google.com/document/d/1Ow0p03rLKbh3pK_DvdXZckp-flhczToMeyCZCy3hi54/edit?usp=sharing
